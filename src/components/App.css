@@ -1,0 +1,134 @@
+.site-wrapper {
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 100px;
+}
+
+.center-children {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.center-children-lists {
+  display: flex;
+  justify-content: left;
+  flex-direction: row;
+}
+
+.form-field {
+  width: 250px !important;
+  height: 50px;
+  padding: 10px;
+  margin: 15px;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+}
+
+.delete-button {
+  margin-left: 5px;
+  padding-left: 5px;
+  font-size: 18px;
+  align-self: flex-end;
+}
+
+.add-button {
+  width: 100px;
+}
+
+button {
+  border-style: none;
+  background-color: #ffff;
+}
+
+.list-box {
+  margin-top: 10px;
+  min-height: 100px;
+  border: 10px;
+  flex-direction: row;
+  justify-content: left;
+}
+
+ul {
+  margin-top: 10px;
+  min-height: 100px;
+  border: 10px;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+}
+
+.left-list {
+  margin-left: 20px;;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-right: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+}
+
+.list-item {
+  text-align: left;
+}
+
+.title {
+  margin-top: 40px;
+}
+
+.item {
+  margin-right: 10px;
+  max-width: 150px;
+}
+
+.card {
+  border-style: none !important;
+  background-color: none !important;
+}
+
+.card-head {
+  background-color: #ffff;
+}
+
+.image {
+  width: 100px;
+  height: auto;
+  margin-right: 15px;
+  margin-left: 15px;
+}
+
+.recipe-toggle {
+  align-self: right;
+  color: #004085;
+}
+
+.list-align {
+  display: flex;
+  justify-content: space-between;
+}
+
+ul {
+  list-style: none;
+  text-align: left;
+  padding-left: 20px !important;
+}
+
+.box {
+  width: 600px;
+  height: auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  margin-left: 45px;
+  border-color: grey;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: left;
+}
+
+.fractions {
+  /* font-variant-numeric: diagonal-fractions; */
+}
