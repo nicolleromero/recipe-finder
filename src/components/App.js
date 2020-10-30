@@ -1,47 +1,57 @@
 import React, { useEffect, useState } from 'react';
 import { Spinner } from 'react-bootstrap';
 
-import AddItem from './AddItem';
+// import AddItem from './AddItem';
+import Search from './Search';
 import Filter from './Filter';
 import ItemList from './ItemList';
 
 import './App.css';
 
-const APP_ID = ;
-const APP_KEY = ;
-
-const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
-const TARGET_URL = 'https://api.edamam.com/search?q=' + encodeURIComponent('crepes');
-const URL = PROXY_URL + TARGET_URL + "&app_id=" + APP_ID + "&app_key=" + APP_KEY;
-
-async function getList() {
-  const response = await fetch(URL);
-
-  if (!response.ok) {
-    const message = `An error has occured: ${response.status}`;
-    console.log(message);
-    throw new Error(message);
-  }
-
-  const data = await response.json();
-
-  return data.hits.map((item) => {
-    return {
-      id: item.recipe.uri,
-      title: item.recipe.label,
-      image: item.recipe.image,
-      ingredients: item.recipe.ingredientLines,
-    };
-  })
-}
+// const APP_ID = Add your own from https://developer.edamam.com/
+// const APP_KEY = Add your own from https://developer.edamam.com/
 
 export default function App() {
   const [list, setList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [filterText, setFilterText] = useState('');
   const [loading, setLoading] = useState(true);
 
+  console.log("searchTerm", searchTerm);
+
+  const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+  const TARGET_URL = 'https://api.edamam.com/search?q=' + encodeURIComponent(searchTerm);
+  const URL = PROXY_URL + TARGET_URL + "&app_id=" + APP_ID + "&app_key=" + APP_KEY;
+
+  async function getList() {
+    const response = await fetch(URL);
+
+    if (!response.ok) {
+      const message = `An error has occured: ${response.status}`;
+      console.log(message);
+      throw new Error(message);
+    }
+
+    const data = await response.json();
+
+    return data.hits.map((item) => {
+      return {
+        id: item.recipe.uri,
+        title: item.recipe.label,
+        image: item.recipe.image,
+        ingredients: item.recipe.ingredientLines,
+      };
+    })
+  }
+
   useEffect(() => {
     let mounted = true;
+
+    if (!searchTerm) {
+      return () => {
+        mounted = false;
+      };
+    }
 
     getList()
       .then(items => {
@@ -51,15 +61,17 @@ export default function App() {
       })
       .finally(() => setLoading(false));
 
+    // setSearchTerm('');
+
     return () => {
       mounted = false;
     };
-  }, [])
+  }, [searchTerm])
 
   // Add a new item to the items array
-  function handleAddItem(newItem) {
-    setList((list) => [...list, newItem]);
-  };
+  // function handleAddItem(newItem) {
+  //   setList((list) => [...list, newItem]);
+  // };
 
   // Delete an item from the items array
   function handleDeleteItem(itemId) {
@@ -70,15 +82,17 @@ export default function App() {
 
   if (filterText) {
     newList = newList.filter((dish) => {
-      for (let ingredient of dish.ingredients) {
-        if (ingredient.includes(filterText)) {
-          return true;
+      for (let term of filterText.split(",")) {
+        for (let ingredient of dish.ingredients) {
+          if (ingredient.toLowerCase().includes(term.toLowerCase())) {
+            return false;
+          }
+        }
+        if (dish.title.toLowerCase().includes(term.toLowerCase())) {
+          return false;
         }
       }
-      if (dish.title.includes(filterText)) {
-        return true;
-      }
-      return false;
+      return true;
     });
   }
 
@@ -87,12 +101,15 @@ export default function App() {
       <div>
         <div className="d-flex justify-content-center inline align-items-center">
           <h1>
-            Some Great Title Here
+            Recipe Finder & Filter
           </h1>
         </div>
-        <AddItem
-          onAddItem={handleAddItem}
+        <Search
+          setSearchTerm={setSearchTerm}
         />
+        {/* <AddItem
+          onAddItem={handleAddItem}
+        /> */}
         {
           loading && (
             <div>

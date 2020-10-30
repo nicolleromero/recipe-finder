@@ -6,8 +6,6 @@ export default function Item(props) {
   return (
     <li>
       <div className="left-list">
-        {/* <span className="item">{props.item.title}</span> */}
-        {/* <span>[Ingredients: {props.dish.ingredients}]</span> */}
         <Accordion>
           <div className="left-list">
             <div className="card-head list-item">

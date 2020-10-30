@@ -1,27 +1,24 @@
 import React, { useState } from 'react';
 
-export default function AddItem(props) {
+export default function Search(props) {
   const [title, setTitle] = useState('');
 
-  // Create a new item from form data
-  function handleCreateNewitem(event) {
+  function handleSetSearchTerm(event) {
     event.preventDefault();
 
-    const newItem = { id: Date.now(), title: title, image: '', ingredients: [] };
-    props.onAddItem(newItem);
-    console.log("New item created:", newItem);
+    console.log("title", title);
+    props.setSearchTerm(title);
 
-    setTitle('');
   }
 
   return (
     <div>
       <div className="center-children">
-        <form onSubmit={handleCreateNewitem}>
+        <form onSubmit={handleSetSearchTerm}>
           <input
             type="text"
             className="form-field"
-            placeholder="Title of item"
+            placeholder="Name of the dish"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
