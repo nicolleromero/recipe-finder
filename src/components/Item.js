@@ -1,7 +1,17 @@
 import React from 'react';
+import { useRecoilState } from 'recoil';
 import { Accordion } from 'react-bootstrap';
 
+import { dishListState } from './App';
+
 export default function Item(props) {
+  const [list, setList] = useRecoilState(dishListState);
+
+  // Delete an item from the items array
+  function handleDeleteItem(itemId) {
+    const updatedList = list.filter((item) => item.id !== itemId);
+    setList(updatedList);
+  }
 
   return (
     <li>
@@ -11,7 +21,7 @@ export default function Item(props) {
             <div className="card-head list-item">
               <button
                 className="btn btn-sm delete-button"
-                onClick={() => props.onDeleteItem(props.item.id)}
+                onClick={() => handleDeleteItem(props.item.id)}
               >
                 ✕
               </button>

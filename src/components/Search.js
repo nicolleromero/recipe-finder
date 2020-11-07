@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { searchState } from './App';
 
-export default function Search(props) {
+export default function Search() {
+  const [searchTerm, setSearchTerm] = useRecoilState(searchState);
   const [title, setTitle] = useState('');
 
   function handleSetSearchTerm(event) {
     event.preventDefault();
 
-    console.log("title", title);
-    props.setSearchTerm(title);
+    setSearchTerm(title);
 
   }
 
@@ -24,7 +26,6 @@ export default function Search(props) {
           />
           <button
             type="submit"
-            className="add-button"
             variant="outline-secondary"
             disabled={!title.trim()}
           >

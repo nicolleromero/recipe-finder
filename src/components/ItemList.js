@@ -1,24 +1,21 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 
 import Item from './Item';
+import { filteredDishListState } from './App';
 
-export default function ItemList(props) {
-
-  // Only render if the item array includes an item
-  if (!props.newList) {
-    return null;
-  }
+export default function ItemList() {
+  const filteredDishes = useRecoilValue(filteredDishListState);
 
   return (
     <div>
       <div className="center-children">
         <ul>
-          {props.newList.map((item) => {
+          {filteredDishes.map((item) => {
             return (
               <Item
                 item={item}
                 key={item.id}
-                onDeleteItem={props.onDeleteItem}
               />
             )
           })}

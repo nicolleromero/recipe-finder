@@ -1,23 +1,70 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { atom, selector, useRecoilValue, useRecoilState } from 'recoil';
 import { Spinner } from 'react-bootstrap';
 
-// import AddItem from './AddItem';
 import Search from './Search';
 import Filter from './Filter';
 import ItemList from './ItemList';
 
 import './App.css';
 
-// const APP_ID = Add your own from https://developer.edamam.com/
-// const APP_KEY = Add your own from https://developer.edamam.com/
+const dishListState = atom({
+  key: 'dishListState',
+  default: [],
+});
+
+const filterState = atom({
+  key: 'filterState',
+  default: '',
+});
+
+const searchState = atom({
+  key: 'searchState',
+  default: '',
+});
+
+const loadingState = atom({
+  key: 'loadingState',
+  default: true,
+});
+
+const filteredDishListState = selector({
+  key: 'filteredDishListState',
+  get: ({ get }) => {
+    const filter = get(filterState);
+    const list = get(dishListState);
+
+    if (filter) {
+      return list.filter((dish) => {
+        for (let term of filter.split(",")) {
+          for (let ingredient of dish.ingredients) {
+            if (ingredient.toLowerCase().includes(term.toLowerCase())) {
+              return false;
+            }
+          }
+          if (dish.title.toLowerCase().includes(term.toLowerCase())) {
+            return false;
+          }
+        }
+        return true;
+      });
+    } else {
+      return list;
+    }
+  },
+});
+
+// const APP_ID = {provide your own}
+// const APP_KEY = {provide your own}
+
+export { dishListState, filterState, searchState, filteredDishListState };
 
 export default function App() {
-  const [list, setList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterText, setFilterText] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  console.log("searchTerm", searchTerm);
+  const [list, setList] = useRecoilState(dishListState);
+  const searchTerm = useRecoilValue(searchState);
+  const [filterText, setFilterText] = useRecoilState(filterState);
+  const filteredDishes = useRecoilValue(filteredDishListState);
+  const [loading, setLoading] = useRecoilState(loadingState);
 
   const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
   const TARGET_URL = 'https://api.edamam.com/search?q=' + encodeURIComponent(searchTerm);
@@ -53,48 +100,20 @@ export default function App() {
       };
     }
 
+    setFilterText('');
+
     getList()
       .then(items => {
         if (mounted) {
-          setList((list) => [...items, ...list]);
+          setList((list) => items);
         }
       })
       .finally(() => setLoading(false));
-
-    // setSearchTerm('');
 
     return () => {
       mounted = false;
     };
   }, [searchTerm])
-
-  // Add a new item to the items array
-  // function handleAddItem(newItem) {
-  //   setList((list) => [...list, newItem]);
-  // };
-
-  // Delete an item from the items array
-  function handleDeleteItem(itemId) {
-    setList((list) => list.filter((item) => item.id !== itemId));
-  }
-
-  let newList = list;
-
-  if (filterText) {
-    newList = newList.filter((dish) => {
-      for (let term of filterText.split(",")) {
-        for (let ingredient of dish.ingredients) {
-          if (ingredient.toLowerCase().includes(term.toLowerCase())) {
-            return false;
-          }
-        }
-        if (dish.title.toLowerCase().includes(term.toLowerCase())) {
-          return false;
-        }
-      }
-      return true;
-    });
-  }
 
   return (
     <div className="site-wrapper">
@@ -104,34 +123,20 @@ export default function App() {
             Recipe Finder & Filter
           </h1>
         </div>
-        <Search
-          setSearchTerm={setSearchTerm}
-        />
-        {/* <AddItem
-          onAddItem={handleAddItem}
-        /> */}
-        {
-          loading && (
-            <div>
-              <div className="d-flex justify-content-center inline align-items-center">
-                <Spinner animation="border" variant="secondary" role="status">
-                  <span className="sr-only">Loading...</span>
-                </Spinner>
-              </div>
-            </div >
-          )
-        }
+        <Search />
+        {searchTerm && loading && (
+          <div>
+            <div className="d-flex justify-content-center inline align-items-center">
+              <Spinner animation="border" variant="secondary" role="status">
+                <span className="sr-only">Loading...</span>
+              </Spinner>
+            </div>
+          </div >
+        )}
         {list.length > 0 && (
           <div>
-            <Filter
-              filterText={filterText}
-              onFilter={setFilterText}
-            />
-            <ItemList
-              newList={newList}
-              onDeleteItem={handleDeleteItem}
-              listTitle="Saved Items"
-            />
+            <Filter />
+            <ItemList />
           </div>
         )}
       </div>

@@ -1,15 +1,18 @@
 import React from 'react';
+import { useRecoilState } from 'recoil';
+import { filterState } from './App';
 
-export default function Filter(props) {
+export default function Filter() {
+  const [filterText, setFilterText] = useRecoilState(filterState);
 
   return (
     <div className="center-children">
       <input
         type="text"
-        placeholder="Filter out by ingredients"
+        placeholder="Omit by these ingredients"
         className="form-field"
-        value={props.filterText}
-        onChange={(e) => props.onFilter(e.target.value)}
+        value={filterText}
+        onChange={(e) => setFilterText(e.target.value)}
       />
     </div>
   )
