@@ -1,6 +1,6 @@
 
-const APP_ID = "a68a7a67";
-const APP_KEY = "191a157427bf4a5aca390888329deb95";
+const APP_ID = "";
+const APP_KEY = "";
 const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
 const SEARCH_URL = 'https://api.edamam.com/search?q=';
 
