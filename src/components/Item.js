@@ -2,7 +2,7 @@ import React from 'react';
 import { useRecoilState } from 'recoil';
 import { Accordion } from 'react-bootstrap';
 
-import { dishListState } from './App';
+import { dishListState } from '../recoil/atoms';
 
 export default function Item(props) {
   const [list, setList] = useRecoilState(dishListState);
@@ -14,19 +14,20 @@ export default function Item(props) {
   }
 
   return (
-    <li>
-      <div className="left-list">
-        <Accordion>
-          <div className="left-list">
-            <div className="card-head list-item">
-              <button
-                className="btn btn-sm delete-button"
-                onClick={() => handleDeleteItem(props.item.id)}
-              >
-                ✕
+    <div className="card">
+      <button
+        className="btn btn-sm delete-button"
+        onClick={() => handleDeleteItem(props.item.id)}
+      >
+        ✕
               </button>
-              <img className="image" src={props.item.image} />
-              <span className="item text-truncate">{props.item.title}</span>
+      <Accordion>
+        <div className="left-list">
+          <div className="card-head list-item">
+            <img className="image" src={props.item.image} />
+            <div className="item">
+              {props.item.title}</div>
+            <div className="ingredients">
               <Accordion.Toggle as="button" variant="link" eventKey="0" className="recipe-toggle">
                 View Ingredients ⬍
               </Accordion.Toggle>
@@ -46,8 +47,8 @@ export default function Item(props) {
               </Accordion.Collapse>
             </div>
           </div>
-        </Accordion>
-      </div>
-    </li>
+        </div>
+      </Accordion>
+    </div>
   )
 }

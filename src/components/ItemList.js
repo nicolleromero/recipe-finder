@@ -2,15 +2,15 @@ import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import Item from './Item';
-import { filteredDishListState } from './App';
+import { filteredDishListState } from '../recoil/selector';
 
 export default function ItemList() {
   const filteredDishes = useRecoilValue(filteredDishListState);
 
   return (
     <div>
-      <div className="center-children">
-        <ul>
+      <div className="grid-container">
+        <div>
           {filteredDishes.map((item) => {
             return (
               <Item
@@ -19,7 +19,7 @@ export default function ItemList() {
               />
             )
           })}
-        </ul>
+        </div>
       </div>
     </div>
   );

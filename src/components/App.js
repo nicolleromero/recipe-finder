@@ -1,95 +1,20 @@
 import React, { useEffect } from 'react';
-import { atom, selector, useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { Spinner } from 'react-bootstrap';
 
 import Search from './Search';
 import Filter from './Filter';
 import ItemList from './ItemList';
+import { getList } from './Fetch';
+import { dishListState, filterState, searchState, loadingState } from '../recoil/atoms';
 
 import './App.css';
-
-const dishListState = atom({
-  key: 'dishListState',
-  default: [],
-});
-
-const filterState = atom({
-  key: 'filterState',
-  default: '',
-});
-
-const searchState = atom({
-  key: 'searchState',
-  default: '',
-});
-
-const loadingState = atom({
-  key: 'loadingState',
-  default: true,
-});
-
-const filteredDishListState = selector({
-  key: 'filteredDishListState',
-  get: ({ get }) => {
-    const filter = get(filterState);
-    const list = get(dishListState);
-
-    if (filter) {
-      return list.filter((dish) => {
-        for (let term of filter.split(",")) {
-          for (let ingredient of dish.ingredients) {
-            if (ingredient.toLowerCase().includes(term.toLowerCase())) {
-              return false;
-            }
-          }
-          if (dish.title.toLowerCase().includes(term.toLowerCase())) {
-            return false;
-          }
-        }
-        return true;
-      });
-    } else {
-      return list;
-    }
-  },
-});
-
-// const APP_ID = {provide your own}
-// const APP_KEY = {provide your own}
-
-export { dishListState, filterState, searchState, filteredDishListState };
 
 export default function App() {
   const [list, setList] = useRecoilState(dishListState);
   const searchTerm = useRecoilValue(searchState);
   const [filterText, setFilterText] = useRecoilState(filterState);
-  const filteredDishes = useRecoilValue(filteredDishListState);
   const [loading, setLoading] = useRecoilState(loadingState);
-
-  const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
-  const TARGET_URL = 'https://api.edamam.com/search?q=' + encodeURIComponent(searchTerm);
-  const URL = PROXY_URL + TARGET_URL + "&app_id=" + APP_ID + "&app_key=" + APP_KEY;
-
-  async function getList() {
-    const response = await fetch(URL);
-
-    if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      console.log(message);
-      throw new Error(message);
-    }
-
-    const data = await response.json();
-
-    return data.hits.map((item) => {
-      return {
-        id: item.recipe.uri,
-        title: item.recipe.label,
-        image: item.recipe.image,
-        ingredients: item.recipe.ingredientLines,
-      };
-    })
-  }
 
   useEffect(() => {
     let mounted = true;
@@ -100,9 +25,9 @@ export default function App() {
       };
     }
 
-    setFilterText('');
+    setFilterText([]);
 
-    getList()
+    getList(searchTerm)
       .then(items => {
         if (mounted) {
           setList((list) => items);
@@ -116,17 +41,17 @@ export default function App() {
   }, [searchTerm])
 
   return (
-    <div className="site-wrapper">
+    <div className="site-wrapper background">
       <div>
-        <div className="d-flex justify-content-center inline align-items-center">
+        <div className="d-flex justify-content-left inline search-row">
           <h1>
             Recipe Finder & Filter
           </h1>
+          <Search />
         </div>
-        <Search />
         {searchTerm && loading && (
           <div>
-            <div className="d-flex justify-content-center inline align-items-center">
+            <div className="d-flex justify-content-center inline align-items-center spinner">
               <Spinner animation="border" variant="secondary" role="status">
                 <span className="sr-only">Loading...</span>
               </Spinner>
